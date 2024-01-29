@@ -29,7 +29,7 @@ export class MailService {
   }
 
   async sendUserConfirmation(user: any, token: string) {
-    const confirmationLink = `http://localhost:3000/auth/confirm?token=${token}`;
+    const confirmationLink = `http://localhost:5173/login/confirm?token=${token}`;
     const emailBody = `Hello ${user.firstName},\n\nWelcome to our platform! Please click on the following link to confirm your email address: ${confirmationLink}\n\nRegards,\nThe Team`;
     const info = await this.transporter.sendMail(
       {

@@ -15,7 +15,9 @@ export class UserService {
     return this.usersRepository.find();
   }
   findOne(user: string): Promise<any> {
-    return this.usersRepository.findOne({ where: { email: user } });
+    return this.usersRepository.findOne({
+      where: { email: user },
+    });
   }
 
   updateUser(updateUserData: any): Promise<any> {
@@ -23,7 +25,6 @@ export class UserService {
       { id: updateUserData.id },
       {
         isActive: true,
-        password: 'newPassword',
       },
     );
 

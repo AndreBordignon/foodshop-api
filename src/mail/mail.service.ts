@@ -1,8 +1,5 @@
 import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
-import * as handlebars from 'handlebars';
-import * as fs from 'fs';
-import * as path from 'path';
 
 @Injectable()
 export class MailService {
@@ -18,14 +15,6 @@ export class MailService {
         pass: 'uxjk cbgb lidm phkt',
       },
     });
-  }
-
-  private loadTemplate(templateName: string): handlebars.TemplateDelegate {
-    const templatesFolderPath = path.join(__dirname, './templates');
-    const templatePath = path.join(templatesFolderPath, templateName);
-
-    const templateSource = fs.readFileSync(templatePath, 'utf8');
-    return handlebars.compile(templateSource);
   }
 
   async sendUserConfirmation(user: any, token: string) {

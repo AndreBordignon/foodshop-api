@@ -1,3 +1,5 @@
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+
 export class User {
   id: number;
 
@@ -11,5 +13,5 @@ export class User {
 
   password: string;
 
-  restaurtant: any[] | any;
+  restaurtants?: Restaurant[];
 }

@@ -21,21 +21,12 @@ export class Restaurant {
   companyName: string;
 
   @Column()
-  managerName: string;
-
-  @Column()
-  managerEmail: string;
-
-  @Column()
   companyPhone: string;
 
-  @ManyToOne(() => User, (user) => user.restaurants) // Supondo que User tenha uma propriedade 'restaurants' para o relacionamento inverso
-  @JoinColumn({ name: 'managerId' }) // Isso cria uma coluna de chave estrangeira 'managerId' na tabela 'restaurant'
+  @ManyToOne(() => User, (user) => user.restaurants)
+  @JoinColumn({ name: 'manager' })
   manager: User;
 
   @Column({ default: true })
   isActive: boolean;
-
-  @Column({ nullable: false })
-  password: string;
 }

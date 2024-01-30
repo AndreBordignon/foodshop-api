@@ -15,4 +15,7 @@ export class CreateUserDto {
 
   @ApiProperty({ description: 'User password', required: true })
   password: string;
+
+  @ApiProperty({ description: 'Restaurant ID', required: false })
+  restaurant?: string;
 }

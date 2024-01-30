@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/user/entities/user.entitie';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity()
 export class Restaurant {
@@ -21,6 +28,10 @@ export class Restaurant {
 
   @Column()
   companyPhone: string;
+
+  @ManyToOne(() => User, (user) => user.restaurants) // Supondo que User tenha uma propriedade 'restaurants' para o relacionamento inverso
+  @JoinColumn({ name: 'managerId' }) // Isso cria uma coluna de chave estrangeira 'managerId' na tabela 'restaurant'
+  manager: User;
 
   @Column({ default: true })
   isActive: boolean;

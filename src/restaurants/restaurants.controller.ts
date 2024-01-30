@@ -22,21 +22,27 @@ export class RestaurantsController {
   ) {}
 
   @Post()
-  create(@Body() createRestaurantDto: CreateRestaurantDto) {
-    const createManagerUser = {
-      email: createRestaurantDto.managerEmail,
-      firstName: createRestaurantDto.managerName,
-      lastName: '',
-      isActive: true,
-      password: createRestaurantDto.password,
-    };
-    const userExists = this.userService.findOne(createManagerUser.email);
-    let newUser = {};
-    if (!userExists) {
-      newUser = this.userService.create(createManagerUser);
-    }
+  async create(@Body() createRestaurantDto: CreateRestaurantDto) {
+    const restaurant =
+      await this.restaurantsService.create(createRestaurantDto);
 
-    return this.restaurantsService.create(createRestaurantDto), newUser;
+    let manager = await this.userService.findOne(
+      createRestaurantDto.managerEmail,
+    );
+
+    if (!manager) {
+      const createManagerUserDto = {
+        email: createRestaurantDto.managerEmail,
+        firstName: createRestaurantDto.managerName,
+        lastName: '',
+        isActive: true,
+        password: createRestaurantDto.password,
+      };
+      manager = this.userService.create(createManagerUserDto);
+    }
+    restaurant.manager = manager;
+    await this.restaurantsService.create(restaurant);
+    return restaurant;
   }
 
   @Get()

@@ -24,9 +24,8 @@ export class User {
   @Column()
   email: string;
 
-  @JoinColumn()
-  @OneToMany(() => Restaurant, (restaurant) => restaurant.id)
-  restaurants: Restaurant[];
+  @OneToMany(() => Restaurant, (restaurant) => restaurant.manager)
+  restaurants?: Restaurant[];
 
   @Column({ nullable: false })
   password: string;

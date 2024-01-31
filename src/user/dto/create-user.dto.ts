@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'User first name' })
@@ -17,5 +18,5 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty({ description: 'Restaurant ID', required: false })
-  restaurant?: string;
+  restaurants?: Restaurant[];
 }

@@ -6,12 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
+  ParseFilePipe,
+  Put,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/user/user.service';
+import {
+  AnyFilesInterceptor,
+  FileFieldsInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 
 @ApiTags('Restaurants')
 @Controller('restaurants')
@@ -22,26 +33,16 @@ export class RestaurantsController {
   ) {}
 
   @Post()
-  async create(@Body() createRestaurantDto: CreateRestaurantDto) {
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(
+    @UploadedFiles()
+    file: Array<Express.Multer.File>,
+    @Body() createRestaurantDto: CreateRestaurantDto,
+  ) {
+    await this.restaurantsService.upload(file[0].originalname, file[0].buffer);
     const restaurant =
       await this.restaurantsService.create(createRestaurantDto);
 
-    let manager = await this.userService.findOne(
-      createRestaurantDto.managerEmail,
-    );
-
-    if (!manager) {
-      const createManagerUserDto = {
-        email: createRestaurantDto.managerEmail,
-        firstName: createRestaurantDto.managerName,
-        lastName: '',
-        isActive: true,
-        password: createRestaurantDto.password,
-      };
-      manager = this.userService.create(createManagerUserDto);
-    }
-    restaurant.manager = manager;
-    await this.restaurantsService.create(restaurant);
     return restaurant;
   }
 

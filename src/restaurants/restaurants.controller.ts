@@ -17,7 +17,12 @@ import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/user/user.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  AnyFilesInterceptor,
+  FileFieldsInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 
 @ApiTags('Restaurants')
 @Controller('restaurants')
@@ -27,19 +32,14 @@ export class RestaurantsController {
     private userService: UserService,
   ) {}
 
-  @Put()
-  @UseInterceptors(FileInterceptor('file'))
+  @Post()
+  @UseInterceptors(AnyFilesInterceptor())
   async create(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [],
-      }),
-    )
-    file: Express.Multer.File,
+    @UploadedFiles()
+    file: Array<Express.Multer.File>,
     @Body() createRestaurantDto: CreateRestaurantDto,
   ) {
-    console.log(file);
-    await this.restaurantsService.upload(file.originalname, file.buffer);
+    await this.restaurantsService.upload(file[0].originalname, file[0].buffer);
     const restaurant =
       await this.restaurantsService.create(createRestaurantDto);
 

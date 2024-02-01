@@ -28,7 +28,7 @@ export class MailService {
       },
       (e) => console.error('erro', e),
     );
-    console.log('info', info);
+    return;
   }
 
   // Other email sending methods...

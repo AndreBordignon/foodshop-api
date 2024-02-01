@@ -68,4 +68,16 @@ export class AuthController {
   getProfile(@Req() req, @Res() res) {
     return res.send({ status: 'Autorizado' }, 200);
   }
+
+  @Post('signout')
+  signOut(@Res() response) {
+    // Define o cookie de autenticação para expirar imediatamente
+    response.cookie('access_token', '', {
+      httpOnly: true, // Recomendado para prevenir ataques XSS
+      expires: new Date(0), // Define a data de expiração para o passado, forçando o navegador a descartar o cookie
+    });
+
+    // Pode retornar uma resposta indicando que o logout foi bem-sucedido
+    return response.status(200).send('Logout successful');
+  }
 }

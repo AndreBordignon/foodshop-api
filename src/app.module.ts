@@ -13,6 +13,12 @@ import { ConfigModule } from '@nestjs/config';
 import { RestaurantsController } from './restaurants/restaurants.controller';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { RestaurantsService } from './restaurants/restaurants.service';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth/constants';
+import { OrdersModule } from './orders/orders.module';
+import { ProductsModule } from './products/products.module';
+import { ProductsController } from './products/products.controller';
+import { ProductsService } from './products/products.service';
 
 @Module({
   imports: [
@@ -30,9 +36,26 @@ import { RestaurantsService } from './restaurants/restaurants.service';
     RestaurantsModule,
     UserModule,
     AuthModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '1d' },
+    }),
+    OrdersModule,
+    ProductsModule,
   ],
-  controllers: [AppController, UserController, RestaurantsController],
-  providers: [AppService, UserService, MailService, RestaurantsService],
+  controllers: [
+    AppController,
+    UserController,
+    RestaurantsController,
+    ProductsController,
+  ],
+  providers: [
+    AppService,
+    UserService,
+    MailService,
+    RestaurantsService,
+    ProductsService,
+  ],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}

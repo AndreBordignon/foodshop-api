@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Product } from 'src/products/entities/product.entity';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/user/entities/user.entitie';
 import {
   Entity,
@@ -10,16 +10,11 @@ import {
   CreateDateColumn,
   OneToMany,
   ManyToMany,
-  JoinTable,
 } from 'typeorm';
 
 @Entity()
-export class Restaurant {
+export class Product {
   @PrimaryGeneratedColumn()
-  @ApiProperty({
-    example: '2',
-    description: 'ID do restaurante',
-  })
   id: number;
 
   @ApiProperty({
@@ -30,20 +25,22 @@ export class Restaurant {
   name: string;
 
   @ApiProperty({
-    example: '45998253744',
-    description: 'Nome da marca',
+    example: 'O melhor hamburguer da cidade',
+    description: 'descrição da marca',
   })
   @Column()
-  phone: string;
+  description: string;
 
-  @ManyToOne(() => User, (user) => user.restaurants)
-  @JoinColumn({ name: 'manager' })
-  manager: User;
+  @ManyToMany(() => Restaurant, (restaurant) => restaurant.products, {
+    cascade: true,
+  })
+  restaurants: Restaurant[];
 
-  @ManyToMany(() => Product, (product) => product.restaurants)
-  @JoinTable({ name: 'restaurant_products' })
-  products: Product[];
-
+  @ApiProperty({
+    example:
+      'https://foodshop-images.s3.sa-east-1.amazonaws.com/logo-restaurante-1.jpeg',
+    description: 'Nome da marca',
+  })
   @Column({ nullable: true })
   image_url: string;
 

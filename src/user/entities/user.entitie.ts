@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -26,6 +27,13 @@ export class User {
 
   @OneToMany(() => Restaurant, (restaurant) => restaurant.manager)
   restaurants?: Restaurant[];
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    name: 'created_at',
+  })
+  createdAt?: Date;
 
   @Column({ nullable: false })
   password: string;

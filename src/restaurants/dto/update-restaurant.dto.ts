@@ -14,9 +14,7 @@ export class UpdateRestaurantDto extends PartialType(CreateRestaurantDto) {
   manager?: User;
 }
 
-export class UpdateRestaurantProductsDto extends PartialType(
-  CreateRestaurantDto,
-) {
+export class UpdateRestaurantProductsDto {
   @ApiProperty({ description: 'Product object' })
   product?: Product;
 }

@@ -39,7 +39,7 @@ export class Product {
   @ApiProperty({
     example:
       'https://foodshop-images.s3.sa-east-1.amazonaws.com/logo-restaurante-1.jpeg',
-    description: 'Nome da marca',
+    description: 'url da logo',
   })
   @Column({ nullable: true })
   image_url: string;

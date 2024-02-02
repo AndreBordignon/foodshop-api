@@ -19,12 +19,11 @@ export class UserController {
   }
   @Get()
   async getUserInfo(@Req() req) {
-    console.log(req.cookie);
     const tokenDecode = await this.jwtService.verifyAsync(
       req.cookies.access_token,
     );
     const user = await this.userService.findOne(tokenDecode.email);
-    console.log(user);
+
     return user;
   }
 }

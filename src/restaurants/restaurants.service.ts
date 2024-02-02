@@ -88,7 +88,8 @@ export class RestaurantsService {
   }
 
   findAll() {
-    return `This action returns all restaurants`;
+    const restaurants = this.restaurantRepository.find();
+    return restaurants;
   }
 
   async upload(fileName: string, file: Buffer) {
@@ -108,8 +109,11 @@ export class RestaurantsService {
     }
   }
 
-  findOne(id: number) {
-    const restaurant = this.restaurantRepository.findOneBy({ id: id });
+  async findOne(id: number) {
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: id },
+      relations: ['products'],
+    });
 
     return restaurant;
   }
@@ -128,11 +132,11 @@ export class RestaurantsService {
     }
 
     let product = await this.productRepository.findOneBy({
-      name: updateProductDto.name,
+      name: updateProductDto.product.name,
     });
 
     if (!product) {
-      product = this.productRepository.create(updateProductDto);
+      product = this.productRepository.create(updateProductDto.product);
       await this.productRepository.save(product);
     }
 
@@ -151,6 +155,8 @@ export class RestaurantsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} restaurant`;
+    this.restaurantRepository.delete({ id: id });
+
+    return `This action removes ${id} restaurant`;
   }
 }

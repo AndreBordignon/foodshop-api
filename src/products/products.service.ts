@@ -54,13 +54,26 @@ export class ProductsService {
     productId: number,
     updateProductDto: UpdateProductDto,
   ) {
-    console.log(productId, updateProductDto);
-    const girar = this.productRepository.findOneBy({ id: productId });
-    console.log('girar', girar);
-    return `This action updates a #${girar} product`;
+    const product = this.productRepository.findOneBy({ id: productId });
+
+    return `This action updates a #${product} product`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const product = await this.productRepository.findOne({
+      where: { id: id },
+      relations: ['restaurants'],
+    });
+
+    if (!product) {
+      throw new Error('Produto não encontrado');
+    }
+
+    // Remove relations from (restaurant_products table)
+    product.restaurants = [];
+    await this.productRepository.save(product);
+
+    await this.productRepository.remove(product);
     return `This action removes a #${id} product`;
   }
 }

@@ -14,10 +14,10 @@ import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantProductsDto } from './dto/update-restaurant.dto';
 import { ApiTags } from '@nestjs/swagger';
-
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { UserService } from 'src/user/user.service';
 
 @ApiTags('Restaurants')
 @Controller('restaurants')

@@ -15,10 +15,16 @@ export class UserService {
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
-  findOne(email: string): Promise<any> {
-    return this.usersRepository.findOne({
+  async findOne(email: string): Promise<any> {
+    const users = await this.usersRepository.findOne({
       where: { email: email },
+      relations: ['restaurants'],
     });
+
+    if (!users) {
+      return null;
+    }
+    return users;
   }
 
   updateUser(updateUserData: any): Promise<any> {

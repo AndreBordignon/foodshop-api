@@ -14,7 +14,6 @@ export class AuthService {
   }
   async validateUser({ username, password }: AuthUserDto) {
     const userLogin = await this.userService.findOne(username);
-    console.log(userLogin);
     if (!userLogin) return null;
     if (password === userLogin?.password) {
       const { ...user } = userLogin;

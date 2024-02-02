@@ -1,12 +1,16 @@
-import { Body, Controller, Post, Get } from '@nestjs/common';
+import { Body, Controller, Post, Get, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('Users')
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   @Post()
   @ApiBody({ type: CreateUserDto })
@@ -14,7 +18,12 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
   @Get()
-  async getUsers() {
-    return this.userService.findAll();
+  async getUserInfo(@Req() req) {
+    const tokenDecode = await this.jwtService.verifyAsync(
+      req.cookies.access_token,
+    );
+    const user = await this.userService.findOne(tokenDecode.email);
+
+    return user;
   }
 }

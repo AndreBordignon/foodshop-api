@@ -8,21 +8,21 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { UpdateRestaurantProductsDto } from './dto/update-restaurant.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { UserService } from 'src/user/user.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { UserService } from 'src/user/user.service';
 
 @ApiTags('Restaurants')
 @Controller('restaurants')
 export class RestaurantsController {
-  constructor(
-    private readonly restaurantsService: RestaurantsService,
-    private userService: UserService,
-  ) {}
+  constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
@@ -31,9 +31,14 @@ export class RestaurantsController {
     file: Array<Express.Multer.File>,
     @Body() createRestaurantDto: CreateRestaurantDto,
   ) {
-    await this.restaurantsService.upload(file[0].originalname, file[0].buffer);
-    const restaurant =
-      await this.restaurantsService.create(createRestaurantDto);
+    const image = await this.restaurantsService.upload(
+      file[0].originalname,
+      file[0].buffer,
+    );
+
+    const newRestaurantData = { ...createRestaurantDto, image_url: image };
+
+    const restaurant = await this.restaurantsService.create(newRestaurantData);
 
     return restaurant;
   }
@@ -45,15 +50,19 @@ export class RestaurantsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.restaurantsService.findOne(+id);
+    return this.restaurantsService.findOne(Number(id));
   }
 
-  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/products')
   update(
     @Param('id') id: string,
-    @Body() updateRestaurantDto: UpdateRestaurantDto,
+    @Body() updateRestaurantProductsDto: UpdateRestaurantProductsDto,
   ) {
-    return this.restaurantsService.update(+id, updateRestaurantDto);
+    return this.restaurantsService.addProductToRestaurant(
+      +id,
+      updateRestaurantProductsDto,
+    );
   }
 
   @Delete(':id')

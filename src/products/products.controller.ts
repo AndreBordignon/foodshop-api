@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -25,9 +26,9 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @Get()
-  findAll() {
-    return this.productsService.findAll();
+  @Get('/store/:id')
+  findAll(@Req() req: any) {
+    return this.productsService.findAll(req.params.storeId);
   }
 
   @Get(':id')
@@ -37,7 +38,7 @@ export class ProductsController {
 
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.addProductToRestaurant(id, updateProductDto);
+    return this.productsService.addProductToStore(id, updateProductDto);
   }
 
   @Delete(':id')

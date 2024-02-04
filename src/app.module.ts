@@ -10,15 +10,16 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { MailService } from './mail/mail.service';
 import { ConfigModule } from '@nestjs/config';
-import { RestaurantsController } from './restaurants/restaurants.controller';
-import { RestaurantsModule } from './restaurants/restaurants.module';
-import { RestaurantsService } from './restaurants/restaurants.service';
+import { StoresController } from './stores/stores.controller';
+import { StoresModule } from './stores/stores.module';
+import { StoresService } from './stores/stores.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { ProductsController } from './products/products.controller';
 import { ProductsService } from './products/products.service';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { ProductsService } from './products/products.service';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    RestaurantsModule,
+    StoresModule,
     UserModule,
     AuthModule,
     JwtModule.register({
@@ -42,18 +43,19 @@ import { ProductsService } from './products/products.service';
     }),
     OrdersModule,
     ProductsModule,
+    CategoriesModule,
   ],
   controllers: [
     AppController,
     UserController,
-    RestaurantsController,
+    StoresController,
     ProductsController,
   ],
   providers: [
     AppService,
     UserService,
     MailService,
-    RestaurantsService,
+    StoresService,
     ProductsService,
   ],
 })

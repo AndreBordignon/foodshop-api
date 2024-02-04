@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { RestaurantsService } from './restaurants.service';
-import { RestaurantsController } from './restaurants.controller';
+import { StoresService } from './stores.service';
+import { StoresController } from './stores.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Restaurant } from './entities/restaurant.entity';
+import { Store } from './entities/store.entity';
 import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
 import { User } from 'src/user/entities/user.entitie';
@@ -14,13 +14,13 @@ import { MailService } from 'src/mail/mail.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Restaurant, User, Product]),
+    TypeOrmModule.forFeature([Store, User, Product]),
     UserModule,
     ProductsModule,
     AuthModule,
   ],
-  controllers: [RestaurantsController],
-  providers: [RestaurantsService, UserService, ProductsService, MailService],
-  exports: [TypeOrmModule, RestaurantsService],
+  controllers: [StoresController],
+  providers: [StoresService, UserService, ProductsService, MailService],
+  exports: [TypeOrmModule, StoresService],
 })
-export class RestaurantsModule {}
+export class StoresModule {}

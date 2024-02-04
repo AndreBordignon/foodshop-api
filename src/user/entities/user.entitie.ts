@@ -1,10 +1,9 @@
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { Store } from 'src/stores/entities/store.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
 
@@ -25,8 +24,8 @@ export class User {
   @Column()
   email: string;
 
-  @OneToMany(() => Restaurant, (restaurant) => restaurant.manager)
-  restaurants?: Restaurant[];
+  @OneToMany(() => Store, (store) => store.manager)
+  stores?: Store[];
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -14,11 +14,11 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Restaurant {
+export class Store {
   @PrimaryGeneratedColumn()
   @ApiProperty({
     example: '2',
-    description: 'ID do restaurante',
+    description: 'ID do store',
   })
   id: number;
 
@@ -36,12 +36,12 @@ export class Restaurant {
   @Column()
   phone: string;
 
-  @ManyToOne(() => User, (user) => user.restaurants)
+  @ManyToOne(() => User, (user) => user.stores)
   @JoinColumn({ name: 'manager' })
   manager: User;
 
-  @ManyToMany(() => Product, (product) => product.restaurants)
-  @JoinTable({ name: 'restaurant_products' })
+  @ManyToMany(() => Product, (product) => product.stores)
+  @JoinTable({ name: 'store_products' })
   products: Product[];
 
   @Column({ nullable: true })

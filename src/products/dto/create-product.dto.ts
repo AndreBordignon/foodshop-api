@@ -6,5 +6,5 @@ export class CreateProductDto {
   product: Product;
 
   @ApiProperty({ description: 'restaurant id' })
-  restaurantId: number;
+  storeId: number;
 }

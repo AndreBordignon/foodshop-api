@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entitie';
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 
 @Injectable()
 export class UserService {
@@ -18,7 +17,7 @@ export class UserService {
   async findOne(email: string): Promise<any> {
     const users = await this.usersRepository.findOne({
       where: { email: email },
-      relations: ['restaurants'],
+      relations: ['stores'],
     });
 
     if (!users) {

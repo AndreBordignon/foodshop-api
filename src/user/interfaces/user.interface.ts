@@ -1,4 +1,4 @@
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { Store } from 'src/stores/entities/store.entity';
 
 export class User {
   id: number;
@@ -13,5 +13,5 @@ export class User {
 
   password: string;
 
-  restaurtants?: Restaurant[];
+  restaurtants?: Store[];
 }

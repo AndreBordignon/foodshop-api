@@ -1,11 +1,8 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import {
-  UpdateRestaurantDto,
-  UpdateRestaurantProductsDto,
-} from './dto/update-restaurant.dto';
+import { CreateStoreDto } from './dto/create-store.dto';
+import { UpdateStoreDto, UpdateStoreProductsDto } from './dto/update-store.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Restaurant } from './entities/restaurant.entity';
+import { Store } from './entities/store.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
@@ -16,7 +13,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
-export class RestaurantsService {
+export class StoresService {
   private readonly s3Client = new S3Client({
     region: this.configService.getOrThrow('AWS_S3_REGION'),
     credentials: {
@@ -25,8 +22,8 @@ export class RestaurantsService {
     },
   });
   constructor(
-    @InjectRepository(Restaurant)
-    private restaurantRepository: Repository<Restaurant>,
+    @InjectRepository(Store)
+    private storeRepository: Repository<Store>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
     private userService: UserService,
@@ -34,42 +31,40 @@ export class RestaurantsService {
     private authService: AuthService,
     private readonly configService: ConfigService,
   ) {}
-  async create(createRestaurantDto: CreateRestaurantDto): Promise<any> {
-    const user = await this.userService.findOne(
-      createRestaurantDto.managerEmail,
-    );
+  async create(createStoreDto: CreateStoreDto): Promise<any> {
+    const user = await this.userService.findOne(createStoreDto.managerEmail);
 
-    const restaurant = await this.restaurantRepository.findOneBy({
-      name: createRestaurantDto.name,
+    const store = await this.storeRepository.findOneBy({
+      name: createStoreDto.name,
     });
 
-    if (restaurant) {
-      throw new HttpException('Restaurante já existe', 400);
+    if (store) {
+      throw new HttpException('Storee já existe', 400);
     }
     if (!user) {
       const createManagerUserDto = {
-        email: createRestaurantDto.managerEmail,
-        firstName: createRestaurantDto.managerName,
+        email: createStoreDto.managerEmail,
+        firstName: createStoreDto.managerName,
         lastName: '',
         isActive: false,
-        password: createRestaurantDto.password,
-        restaurant: createRestaurantDto,
-        manager: createRestaurantDto.managerEmail,
+        password: createStoreDto.password,
+        store: createStoreDto,
+        manager: createStoreDto.managerEmail,
       };
 
       const createdUser = await this.userService.create(createManagerUserDto);
 
-      const restaurant = this.restaurantRepository.create(createRestaurantDto);
-      restaurant.manager = {
+      const store = this.storeRepository.create(createStoreDto);
+      store.manager = {
         id: createdUser.id,
-        email: createRestaurantDto.managerEmail,
-        firstName: createRestaurantDto.managerName,
+        email: createStoreDto.managerEmail,
+        firstName: createStoreDto.managerName,
         lastName: '',
         isActive: false,
-        password: createRestaurantDto.password,
+        password: createStoreDto.password,
       };
 
-      this.restaurantRepository.save(restaurant);
+      this.storeRepository.save(store);
       const { access_token, user } = await this.authService.validateUser({
         username: createManagerUserDto.email,
         password: createManagerUserDto.password,
@@ -79,17 +74,17 @@ export class RestaurantsService {
       return { message: 'Você vai receber um e-mail' };
     }
 
-    const newRestaurant = this.restaurantRepository.create(createRestaurantDto);
-    newRestaurant.manager = user;
+    const newStore = this.storeRepository.create(createStoreDto);
+    newStore.manager = user;
 
-    await this.restaurantRepository.save(newRestaurant);
+    await this.storeRepository.save(newStore);
 
-    return newRestaurant;
+    return newStore;
   }
 
   findAll() {
-    const restaurants = this.restaurantRepository.find();
-    return restaurants;
+    const stores = this.storeRepository.find();
+    return stores;
   }
 
   async upload(fileName: string, file: Buffer) {
@@ -110,25 +105,25 @@ export class RestaurantsService {
   }
 
   async findOne(id: number) {
-    const restaurant = await this.restaurantRepository.findOne({
+    const store = await this.storeRepository.findOne({
       where: { id: id },
       relations: ['products'],
     });
 
-    return restaurant;
+    return store;
   }
 
-  async addProductToRestaurant(
-    restaurantId: number,
-    updateProductDto: UpdateRestaurantProductsDto,
+  async addProductToStore(
+    storeId: number,
+    updateProductDto: UpdateStoreProductsDto,
   ) {
-    const restaurant = await this.restaurantRepository.findOne({
-      where: { id: restaurantId },
-      relations: ['products'], // Carrega os produtos existentes relacionados ao restaurante
+    const store = await this.storeRepository.findOne({
+      where: { id: storeId },
+      relations: ['products'], // Carrega os produtos existentes relacionados ao storee
     });
 
-    if (!restaurant) {
-      throw new Error('Restaurante não encontrado');
+    if (!store) {
+      throw new Error('Storee não encontrado');
     }
 
     let product = await this.productRepository.findOneBy({
@@ -140,23 +135,23 @@ export class RestaurantsService {
       await this.productRepository.save(product);
     }
 
-    const isProductAlreadyAdded = restaurant.products.some(
+    const isProductAlreadyAdded = store.products.some(
       (p) => p.id === product.id,
     );
 
     if (!isProductAlreadyAdded) {
-      restaurant.products.push(product);
-      await this.restaurantRepository.save(restaurant);
+      store.products.push(product);
+      await this.storeRepository.save(store);
 
-      return restaurant;
+      return store;
     }
 
-    return restaurant;
+    return store;
   }
 
   remove(id: number) {
-    this.restaurantRepository.delete({ id: id });
+    this.storeRepository.delete({ id: id });
 
-    return `This action removes ${id} restaurant`;
+    return `This action removes ${id} store`;
   }
 }

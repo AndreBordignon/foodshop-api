@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
-import { User } from 'src/user/entities/user.entitie';
+import { Category } from 'src/categories/entities/category.entity';
+import { Store } from 'src/stores/entities/store.entity';
+
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
-  OneToMany,
   ManyToMany,
 } from 'typeorm';
 
@@ -31,14 +29,20 @@ export class Product {
   @Column()
   description: string;
 
-  @ManyToMany(() => Restaurant, (restaurant) => restaurant.products, {
+  @ManyToMany(() => Category, (category) => category.products)
+  categories: Category[];
+
+  @ManyToMany(() => Store, (store) => store.products, {
     cascade: true,
   })
-  restaurants: Restaurant[];
+  stores: Store[];
+
+  @Column({ name: 'price_in_cents' })
+  priceInCents: number;
 
   @ApiProperty({
     example:
-      'https://foodshop-images.s3.sa-east-1.amazonaws.com/logo-restaurante-1.jpeg',
+      'https://foodshop-images.s3.sa-east-1.amazonaws.com/logo-storee-1.jpeg',
     description: 'url da logo',
   })
   @Column({ nullable: true })

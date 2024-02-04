@@ -14,7 +14,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Foodshop API docs')
     .setDescription('The foodshop api documentation can be found above:')
-    .setVersion('1.0')
+    .setVersion('1.1')
     .addCookieAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

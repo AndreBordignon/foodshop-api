@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/user/entities/user.entitie';
 
-export class CreateRestaurantDto {
-  @ApiProperty({ description: 'Restaurant ID', required: false })
+export class CreateStoreDto {
+  @ApiProperty({ description: 'Store ID', required: false })
   id?: any;
-  @ApiProperty({ description: 'Restaurant logo', required: false })
+  @ApiProperty({ description: 'Store logo', required: false })
   file?: any;
 
-  @ApiProperty({ description: 'Restaurant name', required: true })
+  @ApiProperty({ description: 'Store name', required: true })
   name: string;
 
   @ApiProperty({ description: 'Manager name', required: true })
@@ -27,6 +27,6 @@ export class CreateRestaurantDto {
 
   manager?: User;
 
-  @ApiProperty({ description: 'products from the restaurant', required: false })
+  @ApiProperty({ description: 'products from the store', required: false })
   products?: Product[] = [];
 }

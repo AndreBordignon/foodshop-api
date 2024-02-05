@@ -44,6 +44,10 @@ export class Store {
   @JoinTable({ name: 'store_products' })
   products: Product[];
 
+  @ApiProperty({
+    example: 'https://localstore-s3.com/image.png',
+    description: 'upload de file',
+  })
   @Column({ nullable: true })
   image_url: string;
 
@@ -54,6 +58,10 @@ export class Store {
   })
   createdAt: Date;
 
+  @ApiProperty({
+    example: 'boolean',
+    description: 'upload de file',
+  })
   @Column({ default: true })
   isActive: boolean;
 }

@@ -6,40 +6,91 @@ import { Store } from 'src/stores/entities/store.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { findAllProductsRequestDto } from './dto/get-product.dto';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Store)
     private storeRepository: Repository<Store>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
   ) {}
   async create(createProductDto: CreateProductDto) {
-    const store = await this.storeRepository.findOneBy({
-      id: createProductDto.storeId,
-    });
+    const store = await this.findStoreById(createProductDto.storeId);
+    const category = await this.findOrCreateCategory(
+      createProductDto.product?.category,
+    );
+    const product = await this.findOrCreateProduct(
+      createProductDto.product,
+      store,
+      category,
+    );
 
+    return product;
+  }
+
+  private async findStoreById(storeId: number): Promise<Store> {
+    const store = await this.storeRepository.findOneBy({ id: storeId });
+    if (!store) {
+      throw new Error('Loja não encontrada');
+    }
+    return store;
+  }
+
+  private async findOrCreateCategory(categoryName: string): Promise<Category> {
+    let category = await this.categoryRepository.findOneBy({
+      name: categoryName,
+    });
+    if (!category) {
+      category = this.categoryRepository.create({ name: categoryName });
+      await this.categoryRepository.save(category);
+    }
+    return category;
+  }
+
+  private async findOrCreateProduct(
+    productDto: Product,
+    store: Store,
+    category: Category,
+  ): Promise<Product> {
     let product = await this.productRepository.findOne({
-      where: { name: createProductDto.product.name },
-      relations: ['stores'], // Carrega os storees existentes relacionados ao produto
+      where: { name: productDto.name },
+      relations: ['stores', 'categories'],
     });
 
     if (product) {
-      // O produto já existe, então adicionamos o novo storee à lista de storees do produto
-      if (!product.stores.some((r) => r.id === store.id)) {
-        product.stores.push(store); // Adiciona o novo storee à lista
-      }
-      // Salva as atualizações do produto
-      await this.productRepository.save(product);
+      this.updateProductRelations(product, store, category);
     } else {
-      // Cria um novo produto se ele não existir
       product = this.productRepository.create({
-        ...createProductDto.product,
-        stores: [store], // Associa o novo storee ao novo produto
+        ...productDto,
+        stores: [store],
+        categories: [category],
       });
-      // Salva o novo produto
-      await this.productRepository.save(product);
+    }
+    await this.productRepository.save(product);
+    return product;
+  }
+
+  private updateProductRelations(
+    product: Product,
+    store: Store,
+    category: Category,
+  ) {
+    const isNewStore = !product.stores.some(
+      (storeItem) => storeItem.id === store.id,
+    );
+    const isNewCategory = !product.categories.some(
+      (categoryItem) => categoryItem.id === category.id,
+    );
+
+    if (isNewStore) {
+      product.stores.push(store);
+    }
+    if (isNewCategory) {
+      product.categories.push(category);
     }
   }
 

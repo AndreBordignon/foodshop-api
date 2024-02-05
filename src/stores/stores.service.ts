@@ -126,17 +126,12 @@ export class StoresService {
       throw new Error('Storee não encontrado');
     }
 
-    let product = await this.productRepository.findOneBy({
-      name: updateProductDto.product.name,
+    const product = await this.productRepository.findOneBy({
+      name: updateProductDto.name,
     });
 
-    if (!product) {
-      product = this.productRepository.create(updateProductDto.product);
-      await this.productRepository.save(product);
-    }
-
     const isProductAlreadyAdded = store.products.some(
-      (p) => p.id === product.id,
+      (prod) => prod.id === product.id,
     );
 
     if (!isProductAlreadyAdded) {

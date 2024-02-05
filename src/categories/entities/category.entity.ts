@@ -15,7 +15,7 @@ export class Category {
 
   @ApiProperty({
     example: 'Barra Foods',
-    description: 'Nome da marca',
+    description: 'Nome da categoria',
   })
   @Column()
   name: string;

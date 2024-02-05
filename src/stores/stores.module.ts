@@ -11,10 +11,11 @@ import { ProductsModule } from 'src/products/products.module';
 import { Product } from 'src/products/entities/product.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { MailService } from 'src/mail/mail.service';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Store, User, Product]),
+    TypeOrmModule.forFeature([Store, User, Product, Category]),
     UserModule,
     ProductsModule,
     AuthModule,

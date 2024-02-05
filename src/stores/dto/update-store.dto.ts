@@ -14,7 +14,4 @@ export class UpdateStoreDto extends PartialType(CreateStoreDto) {
   manager?: User;
 }
 
-export class UpdateStoreProductsDto {
-  @ApiProperty({ description: 'Product object' })
-  product?: Product;
-}
+export class UpdateStoreProductsDto extends Product {}

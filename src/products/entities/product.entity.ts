@@ -37,6 +37,8 @@ export class Product {
   })
   stores: Store[];
 
+  category?: string;
+
   @Column({ name: 'price_in_cents' })
   priceInCents: number;
 

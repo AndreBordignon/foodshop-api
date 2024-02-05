@@ -6,6 +6,7 @@ import { Store } from 'src/stores/entities/store.entity';
 import { User } from 'src/user/entities/user.entitie';
 import { Product } from './entities/product.entity';
 import { Category } from 'src/categories/entities/category.entity';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Store, User, Product, Category])],
